@@ -1,0 +1,13 @@
+# Exclude node_modules in any subfolder
+**/node_modules/
+
+# Exclude local environment files in Angular projects
+**/.angular/
+**/dist/
+
+# Exclude specific files/folders in the root directory
+# (Replace these with your actual folder and file names)
+/Angular-class-notes/
+/RPS Course - Angular training v2.1.pdf
+secret_config.json
+.env

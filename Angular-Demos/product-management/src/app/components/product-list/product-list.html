@@ -1,0 +1,169 @@
+<p>product-list works!</p>
+
+<!-- @for (product of products; track product.id) {
+    <div>
+        <h3>{{ product.name }}</h3>
+        <p>Price: ₹{{ product.price }}</p>
+        <button (click)="deleteProduct(product.id)">
+            Remove
+        </button>
+    </div>
+}
+@empty {
+        <li>No products available.</li>
+}
+
+<hr>
+<h1>Search Products</h1>
+        <label for="search">Search products</label>
+
+        <input
+            id="search"
+            type="search"
+            [(ngModel)]="searchTerm"
+        />
+
+        <p>Current search: {{ searchTerm }}</p> -->
+
+<section class="product-page">
+
+    <header class="page-header">
+        <div>
+            <h2>Product Management</h2>
+            <p>Search products and monitor stock availability.</p>
+        </div>
+
+        <p class="result-count">
+            {{ filteredProducts.length }} product(s) found
+        </p>
+    </header>
+
+    <section class="filters">
+
+        <label for="searchTerm">
+            Search by product name
+            <input
+                id="searchTerm"
+                type="search"
+                [(ngModel)]="searchTerm"
+                placeholder="Example: Laptop"
+            />
+        </label>
+
+        <label for="category">
+            Category
+            <select
+                id="category"
+                [(ngModel)]="selectedCategory">
+
+                <option value="ALL">All categories</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Accessories">Accessories</option>
+                <option value="Office">Office</option>
+            </select>
+        </label>
+
+        <label class="checkbox-filter">
+            <input
+                type="checkbox"
+                [(ngModel)]="showLowStockOnly"
+            />
+            Show low-stock products
+        </label>
+
+        <button
+            type="button"
+            class="secondary-button"
+            (click)="clearFilters()">
+
+            Clear filters
+        </button>
+
+    </section>
+
+    @if (filteredProducts.length > 0) {
+
+        <section class="product-grid">
+
+            @for (
+                product of filteredProducts;
+                track product.id
+            ) {
+
+                <article
+                    class="product-card"
+                    [appLowStock]="product.stockQuantity">
+
+                    <div class="product-heading">
+                        <h3>{{ product.name }}</h3>
+                        <span class="category">
+                            {{ product.category }}
+                        </span>
+                    </div>
+
+                    <p class="product-id">
+                        Product ID: {{ product.id }}
+                    </p>
+
+                    <p class="price">
+                        {{ product.price | currency:'INR':'symbol':'1.0-0' }}
+                    </p>
+
+                    <p [ngClass]="{
+                        'out-of-stock': product.stockQuantity === 0,
+                        'low-stock-text':
+                            product.stockQuantity > 0 &&
+                            product.stockQuantity <= 5,
+                        'in-stock-text': product.stockQuantity > 5
+                    }">
+                        Available stock: {{ product.stockQuantity }}
+                    </p>
+
+                    @if (product.stockQuantity === 0) {
+                        <p class="warning">
+                            Out of stock
+                        </p>
+                    } @else if (product.stockQuantity <= 5) {
+                        <p class="warning">
+                            Low stock — consider reordering
+                        </p>
+                    } @else {
+                        <p class="available">
+                            In stock
+                        </p>
+                    }
+
+                    <button
+                        type="button"
+                        class="remove-button"
+                        [disabled]="product.stockQuantity < 0"
+                        (click)="deleteProduct(product.id)">
+
+                        Remove product
+                    </button>
+
+                </article>
+
+            }
+
+        </section>
+
+    } @else {
+
+        <section class="empty-state">
+            <h3>No products found</h3>
+            <p>
+                Try a different search term or change your filters.
+            </p>
+
+            <button
+                type="button"
+                (click)="clearFilters()">
+
+                Clear filters
+            </button>
+        </section>
+
+    }
+
+</section>

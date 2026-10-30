@@ -1,0 +1,40 @@
+<p>counter works!</p>
+    <h2>Normal Variable</h2>
+    <p>Count: {{ normalCount }}</p>
+    <button (click)="incrementNormal()">
+      Increment Normal
+    </button> <button (click)="resetNormal()">Reset</button>
+
+    <hr>
+
+    <h2>Signal</h2>
+    <p>Count: {{ signalCount() }}</p>
+    <button (click)="incrementSignal()">
+      Increment Signal
+    </button> <button (click)="resetSignal()">Reset</button>
+
+    <hr>
+        <h2>Normal Variables</h2>
+
+    <p>Quantity: {{ quantity }}</p>
+    <p>Total: ₹{{ total }}</p>
+
+    <button (click)="increaseQuantity()">
+      Increase Quantity
+    </button>
+
+    <button (click)="recalculateTotal()">
+      Recalculate Total
+    </button>
+
+    <hr>
+
+    <h2>Signals</h2>
+
+    <p>Quantity: {{ signalQuantity() }}</p>
+    <p>Total: ₹{{ signalTotal() }}</p>
+
+    <button (click)="increaseSignalQuantity()">
+      Increase Quantity
+    </button>
+

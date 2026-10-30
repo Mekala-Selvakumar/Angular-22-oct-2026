@@ -1,0 +1,80 @@
+<p>employee-card works!</p>
+
+<h1> Employee Details</h1>
+<table>
+    <tr>
+        <td>Employee Id</td>
+        <td>{{employee.id}}</td>
+    </tr>
+    <tr>
+        <td>Employee Name</td>
+        <td>{{employee.name}}</td>
+    </tr>
+    <tr>
+        <td>Employee Email</td>
+        <td>{{employee.email}}</td>
+    </tr>
+    <tr>
+        <td>Department</td>
+        <td>{{employee.department.id}}<br>
+            {{employee.department.name}} <br>
+            {{employee.department.location??'Location not specified'}}
+        </td>
+    </tr>
+    <tr>
+        <td>Permanent Employee</td>
+        <td>{{employee.permanent}}<br>
+            {{employee.permanent ? 'Yes' : 'No'}}</td>
+    </tr>
+        <tr>
+        <td>Permanent Employee</td>
+        <td> @if(employee.permanent) {
+            <p>Yes</p>
+        }
+        @else {
+            <p>No</p>
+        }
+     </tr>
+     <tr>
+        <td>Skills</td>
+        <td>
+            @for(skill  of  employee.skills; track skill.id) {
+                <p>{{skill.id}} - {{skill.name}} - {{skill.level}}</p>
+            }
+        </td>
+    </tr>
+
+</table>
+
+
+{{ price * quantity }}
+@if(price>1000) {
+    <p>Price is greater than 1000</p>
+}
+
+@if(price>1000) {
+    <p>Price is greater than 1000.............</p>
+}
+@else {
+    <p>Price is less than 1000</p>
+}
+<br>
+@for(num of arr; track num) {
+    <p>{{num}}</p>
+}
+
+@switch (status) {
+    @case ('active') {
+        <p>Status: Active</p>
+    }
+    @case ('inactive') {
+        <p>Status: Inactive</p>
+    }
+    @case ('on-leave') {
+        <p>Status: On Leave</p>
+    }
+}
+
+<!-- @let total =price * quantity
+<p>Total Price: {{ total }}</p> -->
+

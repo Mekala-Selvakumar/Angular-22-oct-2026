@@ -1,0 +1,128 @@
+<p>product-signal-demo works!</p>
+
+<section class="page">
+
+    <header>
+        <h1>Product Management</h1>
+        <p>Signal-based product catalogue</p>
+    </header>
+
+    <section class="summary">
+        <article>
+            <h3>Total products</h3>
+            <p>{{ totalProducts() }}</p>
+        </article>
+
+        <article>
+            <h3>Low-stock products</h3>
+            <p>{{ lowStockCount() }}</p>
+        </article>
+
+        <article>
+            <h3>Inventory value</h3>
+            <p>
+                {{ totalInventoryValue()
+                    | currency:'INR':'symbol':'1.0-0' }}
+            </p>
+        </article>
+    </section>
+
+    <section class="filters">
+
+        <label for="search">
+            Search
+            <input
+                id="search"
+                type="search"
+                [value]="searchTerm()"
+                (input)="setSearchTerm($any($event.target).value)"
+                placeholder="Search products"
+            />
+        </label>
+
+        <label for="category">
+            Category
+            <select
+                id="category"
+                [value]="selectedCategory()"
+                (change)="setCategory($any($event.target).value)">
+
+                <option value="ALL">All categories</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Accessories">Accessories</option>
+                <option value="Office">Office</option>
+            </select>
+        </label>
+
+        <label class="checkbox-label">
+            <input
+                type="checkbox"
+                [checked]="showLowStockOnly()"
+                (change)="setLowStockOnly($any($event.target).checked)"
+            />
+            Show low-stock only
+        </label>
+
+        <button type="button" (click)="clearFilters()">
+            Clear filters
+        </button>
+    </section>
+
+    <section class="product-grid">
+
+        @for (product of filteredProducts(); track product.id) {
+
+            <article class="product-card">
+
+                <h3>{{ product.name }}</h3>
+                <p>Category: {{ product.category }}</p>
+
+                <p class="price">
+                    {{ product.price
+                        | currency:'INR':'symbol':'1.0-0' }}
+                </p>
+
+                <p>Stock: {{ product.stockQuantity }}</p>
+
+                @if (product.stockQuantity === 0) {
+                    <p class="out-of-stock">Out of stock</p>
+                } @else if (product.stockQuantity <= 5) {
+                    <p class="low-stock">Low stock</p>
+                } @else {
+                    <p class="available">In stock</p>
+                }
+
+                <div class="actions">
+                    <button
+                        type="button"
+                        [disabled]="product.stockQuantity === 0"
+                        (click)="updateStock(product.id, -1)">
+
+                        Sell one
+                    </button>
+
+                    <button
+                        type="button"
+                        (click)="updateStock(product.id, 1)">
+
+                        Restock one
+                    </button>
+
+                    <button
+                        type="button"
+                        (click)="deleteProduct(product.id)">
+
+                        Remove
+                    </button>
+                </div>
+
+            </article>
+
+        } @empty {
+            <p>No products match the selected filters.</p>
+        }
+
+    </section>
+
+</section>
+

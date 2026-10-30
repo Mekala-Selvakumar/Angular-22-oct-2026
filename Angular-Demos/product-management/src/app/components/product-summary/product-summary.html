@@ -1,0 +1,35 @@
+<p>product-summary works!</p>
+
+        <h2>{{ productName }}</h2>
+        <p>Category: {{ category }}</p>
+        <p>Price: ₹{{ price }}</p>
+        <p>Stock: {{ stockQuantity }}</p>
+<p>Price including 18% tax: ₹{{ price * 1.18 }}</p>
+
+<p>{{ stockQuantity > 0 ? 'Available' : 'Out of stock' }}</p>
+
+<p>Product name in uppercase: {{ productName.toUpperCase() }}</p>
+
+
+<h2>Product: Laptop</h2>
+
+<button [disabled]="stockQuantity === 0">
+    Add to Cart
+</button>
+
+<button disabled="false">Add to Cart</button>
+<button [disabled]="false">Add to Cart</button>
+<!-- For a native boolean HTML attribute, the first form still includes disabled;
+  the literal text "false" does not make it false. The second form sets the DOM 
+  property to the boolean value false, so the button is enabled.
+
+ -->
+<button [disabled]="isUnavailable">Purchase</button>
+
+<hr>
+@if (stockQuantity === 0) {
+    <p>Out of stock. Please check back later.</p>
+} @else {
+    <p>Product is available.</p>
+}
+

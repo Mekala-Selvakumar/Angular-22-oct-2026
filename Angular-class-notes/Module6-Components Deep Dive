@@ -1,0 +1,929 @@
+# 1. Component lifecycle hooks
+
+## 1.1 What is the component lifecycle?
+
+Every Angular component passes through a sequence of stages:
+
+1. Angular creates the component instance.
+2. Angular initializes its input properties.
+3. Angular initializes its template and child components.
+4. Angular checks the component for updates during change detection.
+5. Angular eventually destroys the component when it is removed from the view.
+
+Lifecycle hooks are methods that allow developers to execute code at specific stages of this process. They are useful when a component needs to initialize data, react to input changes, access its view, or clean up resources.&#x20;
+
+Consider our Product Management application. A product-details component might need to load or prepare information when created, react when the selected product changes, access an input element after rendering, and clean up a subscription when the user navigates away.
+
+Different lifecycle hooks support these different responsibilities.
+
+## 1.2 Lifecycle hook execution order
+
+1\. Constructor
+
+JavaScript object construction and basic dependency injection
+
+2\. `ngOnChanges()`
+
+Runs when component inputs change; first invocation occurs during initialization
+
+3\. `ngOnInit()`
+
+Runs once after initial input values are available
+
+4\. Content and view initialization
+
+`ngAfterContentInit()` and `ngAfterViewInit()`
+
+5\. Subsequent checks and rendering
+
+Input changes, template checks, content/view checks, render callbacks
+
+6\. `ngOnDestroy()`
+
+Clean up resources before the component is destroyed
+
+This is a simplified sequence, not every hook that Angular invokes. For example, `ngDoCheck()`, `ngAfterContentChecked()`, and `ngAfterViewChecked()` can run repeatedly during checks. `afterNextRender()` and `afterEveryRender()` are render callbacks that have different timing from instance lifecycle methods.
+
+## 1.3 Important lifecycle hooks
+
+| Hook                      | When it runs                                | Typical use                                      |
+| ------------------------- | ------------------------------------------- | ------------------------------------------------ |
+| `ngOnChanges()`           | When an input changes                       | React to a newly selected product                |
+| `ngOnInit()`              | Once after initial inputs are initialized   | Perform initial component setup                  |
+| `ngDoCheck()`             | During each check of the component          | Specialized custom change checking               |
+| `ngAfterContentInit()`    | Once after projected content initializes    | Access content queries                           |
+| `ngAfterContentChecked()` | After projected content is checked          | Specialized content-check handling               |
+| `ngAfterViewInit()`       | Once after the component's view initializes | Access initialized view queries                  |
+| `ngAfterViewChecked()`    | After the component's view is checked       | Specialized view-check handling                  |
+| `afterNextRender()`       | After the next application render           | Integrate with DOM-dependent operations          |
+| `afterEveryRender()`      | After every application render              | Perform carefully controlled render-related work |
+| `ngOnDestroy()`           | Before the instance is destroyed            | Clean up resources                               |
+
+Avoid using `ngDoCheck()`, `ngAfterContentChecked()`, or `ngAfterViewChecked()` for ordinary application logic; they can execute frequently and affect performance.&#x20;
+
+### 1.4 `constructor()` versus `ngOnInit()`
+
+Java developers may be familiar with constructors, but a constructor and an Angular lifecycle hook serve different purposes.
+
+The constructor creates the JavaScript object and can receive dependencies through Angular's dependency injection.
+
+`ngOnInit()` runs after Angular has initialized the component's initial inputs. This makes it suitable for initialization that depends on those values.
+
+```
+import { Component, OnInit, input } from '@angular/core';
+
+@Component({
+    selector: 'app-product-summary',
+    standalone: true,
+    template: `<h2>{{ productName() }}</h2>`
+})
+export class ProductSummaryComponent implements OnInit {
+
+    productName = input.required<string>();
+
+    constructor() {
+        console.log('Component instance constructed');
+    }
+
+    ngOnInit(): void {
+        console.log('Initial product:', this.productName());
+    }
+}
+```
+
+When the component is created, Angular assigns the input before calling `ngOnInit()`. Thus, `ngOnInit()` can use the initial value of `productName`.
+
+Best practice: Use the constructor for construction and dependency injection. Use `ngOnInit()` for initialization that requires Angular's initialized inputs.
+
+## 1.5 `ngOnChanges()` — reacting to a selected product
+
+Suppose the product-details component receives a product from its parent. The parent might select Laptop first and then select Monitor.
+
+The component should react when its input changes.
+
+```
+import {
+    Component,
+    input,
+    OnChanges,
+    SimpleChanges
+} from '@angular/core';
+
+import { Product } from './product.model';
+
+@Component({
+    selector: 'app-product-details',
+    standalone: true,
+    template: `
+        <h2>{{ product().name }}</h2>
+        <p>Price: ₹{{ product().price }}</p>
+    `
+})
+export class ProductDetailsComponent implements OnChanges {
+
+    product = input.required<Product>();
+
+    ngOnChanges(
+        changes: SimpleChanges<ProductDetailsComponent>
+    ): void {
+
+        const change = changes.product;
+
+        if (change) {
+            console.log('Previous product:', change.previousValue);
+            console.log('Current product:', change.currentValue);
+            console.log('First change:', change.firstChange);
+        }
+    }
+}
+```
+
+`ngOnChanges()` receives a `SimpleChanges` object. Each entry describes a changed input, including its previous value, current value, and whether it is the first change.
+
+The first `ngOnChanges()` call occurs before `ngOnInit()` when the component has initialized inputs. Subsequent calls occur when inputs change.&#x20;
+
+An important limitation: this hook observes changes to the input value or reference. Mutating a property inside an existing object without replacing the object reference is not the same as assigning a new input value.
+
+For our product demo, we will select a different product object to demonstrate input changes.
+
+## 1.6 `ngAfterViewInit()` — accessing the initialized view
+
+Suppose we need to focus the product search field after the component's view has initialized.
+
+A modern Angular approach is to use a view query and `ngAfterViewInit()`.
+
+```
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    ViewChild
+} from '@angular/core';
+
+@Component({
+    selector: 'app-product-search',
+    standalone: true,
+    template: `
+        <label for="search">Product search</label>
+        <input #searchBox id="search" type="search">
+    `
+})
+export class ProductSearchComponent implements AfterViewInit {
+
+    @ViewChild('searchBox')
+    searchBox!: ElementRef<HTMLInputElement>;
+
+    ngAfterViewInit(): void {
+        this.searchBox.nativeElement.focus();
+    }
+}
+```
+
+Angular resolves the view query, and `ngAfterViewInit()` runs once after the component's view has been initialized.
+
+This example demonstrates the lifecycle concept, but direct DOM interaction should be used carefully. In SSR applications, browser-only operations must be handled in an appropriate browser context. For DOM work that specifically needs to happen after rendering, Angular's render callbacks, such as `afterNextRender()`, may be more suitable.
+
+## 1.7 `ngOnDestroy()` — cleanup
+
+A component might create a timer, subscribe to a long-lived stream, or register an event listener.
+
+When the component is destroyed, resources that are no longer needed must be cleaned up.
+
+```
+import {
+    Component,
+    OnDestroy,
+    OnInit
+} from '@angular/core';
+
+@Component({
+    selector: 'app-product-monitor',
+    standalone: true,
+    template: `<p>Product monitor is active.</p>`
+})
+export class ProductMonitorComponent implements OnInit, OnDestroy {
+
+    private timerId?: ReturnType<typeof setInterval>;
+
+    ngOnInit(): void {
+        this.timerId = setInterval(() => {
+            console.log('Checking product status...');
+        }, 5000);
+    }
+
+    ngOnDestroy(): void {
+        if (this.timerId !== undefined) {
+            clearInterval(this.timerId);
+        }
+
+        console.log('Product monitor destroyed');
+    }
+}
+```
+
+This is a simple demonstration. In a real application, a backend-driven stock-monitoring mechanism would usually be implemented through an appropriate service or stream rather than a console timer.
+
+Angular also provides `DestroyRef` and RxJS utilities such as `takeUntilDestroyed()` to simplify cleanup in suitable contexts.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://angular.dev\&sz=32)
+
+Angular
+
+
+
+# 2. View encapsulation
+
+## 2.1 What is view encapsulation?
+
+View encapsulation determines how Angular scopes a component's CSS and how those styles interact with elements outside the component.
+
+For a Product Management application, imagine that:
+
+- The product list uses a blue border.
+- A low-stock product card uses an orange border.
+- The product-details component has its own padding and typography.
+
+Without a clear styling strategy, CSS selectors could conflict across different parts of the application.
+
+Angular supports multiple view encapsulation modes. The default is `ViewEncapsulation.Emulated`. Other important modes include `ShadowDom` and `None`.&#x20;
+
+
+## 2.2 Mode 1: `ViewEncapsulation.Emulated`
+
+This is Angular's default mode.
+
+Angular scopes component styles by generating special attributes and adjusting CSS selectors. This approximates the isolation expected from Shadow DOM without creating a native shadow root.
+
+```
+import {
+    Component,
+    ViewEncapsulation
+} from '@angular/core';
+
+@Component({
+    selector: 'app-product-card',
+    standalone: true,
+    template: `
+        <article class="product-card">
+            <h3>Laptop</h3>
+            <p>Price: ₹65,000</p>
+        </article>
+    `,
+    styles: `
+        .product-card {
+            padding: 16px;
+            border: 2px solid green;
+            border-radius: 8px;
+        }
+
+        h3 {
+            color: darkgreen;
+        }
+    `,
+    encapsulation: ViewEncapsulation.Emulated
+})
+export class ProductCardComponent {}
+```
+
+The component's styles are scoped to the component's template. Angular achieves this by adding generated attributes to elements and adjusting the corresponding selectors.
+
+### Important distinction
+
+`Emulated` does not mean complete CSS isolation. Global styles can still affect elements inside the component, so specificity and global CSS conventions remain important.
+
+Use this mode when developing ordinary Angular application components. It gives useful style scoping without the broader behavioural implications of native Shadow DOM.
+
+## 2.3 Mode 2: `ViewEncapsulation.ShadowDom`
+
+This mode uses the browser's native Shadow DOM API.
+
+```
+import {
+    Component,
+    ViewEncapsulation
+} from '@angular/core';
+
+@Component({
+    selector: 'app-product-card',
+    standalone: true,
+    template: `
+        <article class="product-card">
+            <h3>Laptop</h3>
+            <p>Price: ₹65,000</p>
+        </article>
+    `,
+    styles: `
+        .product-card {
+            padding: 16px;
+            border: 2px solid blue;
+            border-radius: 8px;
+        }
+
+        h3 {
+            color: navy;
+        }
+    `,
+    encapsulation: ViewEncapsulation.ShadowDom
+})
+export class ProductCardComponent {}
+```
+
+Angular creates a shadow root for the component and renders its template and styles inside that shadow tree.
+
+This provides stronger CSS isolation from ordinary external selectors.
+
+However, Shadow DOM affects more than styling. It also introduces considerations for event propagation, slots, DOM inspection, and integration with global styles.
+
+Use it when genuine encapsulation is required and the implications of the browser's Shadow DOM model are understood.
+
+## 2.4 Mode 3: `ViewEncapsulation.None`
+
+With this mode, Angular does not scope the component's CSS.
+
+```
+import {
+    Component,
+    ViewEncapsulation
+} from '@angular/core';
+
+@Component({
+    selector: 'app-product-card',
+    standalone: true,
+    template: `
+        <article class="product-card">
+            <h3>Laptop</h3>
+        </article>
+    `,
+    styles: `
+        .product-card {
+            border: 2px solid red;
+        }
+    `,
+    encapsulation: ViewEncapsulation.None
+})
+export class ProductCardComponent {}
+```
+
+The `.product-card` rule behaves like a global CSS rule. It can affect matching elements outside this component, including unrelated components that use the same class name.
+
+This mode can be useful for deliberate global styling, but it should not be used casually. Reusable components often need to avoid leaking styles into the rest of the application.
+
+## 2.5 Comparison of view encapsulation modes
+
+| Mode        | CSS scoping                                                  | Native Shadow DOM | Typical use                                 |
+| ----------- | ------------------------------------------------------------ | ----------------- | ------------------------------------------- |
+| `Emulated`  | Angular-generated scoping                                    | No                | Normal Angular application components       |
+| `ShadowDom` | Browser-enforced shadow-tree boundary for ordinary selectors | Yes               | Components requiring native style isolation |
+| `None`      | No component style isolation                                 | No                | Intentional global styling                  |
+
+Angular also documents `ExperimentalIsolatedShadowDom`, an experimental mode that prevents global styles from affecting the component's shadow tree. It should not be confused with the three primary modes above.&#x20;
+
+### Practical styling recommendation
+
+For our Product Management application, use `Emulated` encapsulation for most feature components. Use global styles for shared design tokens, typography, and resets. Avoid `None` unless global styling is intentional, and introduce Shadow DOM only when its encapsulation benefits justify its integration costs.
+
+# 3. Change detection basics
+
+## 3.1 What is change detection?
+
+Change detection is the process Angular uses to determine whether values used by templates have changed and whether corresponding DOM updates are necessary.
+
+Suppose the Product Management page displays:
+
+```
+<h2>{{ product.name }}</h2>
+<p>Available stock: {{ product.stockQuantity }}</p>
+```
+
+When the application changes the displayed product or its stock quantity, Angular needs to reconcile the template with the current state.
+
+In broad terms, Angular traverses relevant portions of the component tree, evaluates bindings, and updates the DOM where necessary.
+
+Understanding this process helps developers avoid stale UI, unnecessary work, and incorrect assumptions about object mutation.
+
+## 3.2 `Eager` versus `OnPush`
+
+Angular's change-detection strategy determines how components are checked.
+
+The current Angular 22 API documents `Eager` and `OnPush` as the two strategies, with `OnPush` enabled by default for new Angular applications. `Default` is deprecated in Angular 22 as an alias for `Eager`. Older Angular versions commonly defaulted to the eager/default strategy, so version differences matter.&#x20;
+
+### Eager change detection
+
+With eager change detection, Angular checks a component when the change-detection traversal reaches it after relevant application activity.
+
+This is conceptually similar to the traditional default behaviour familiar to developers from older Angular versions.
+
+### OnPush change detection
+
+With `OnPush`, Angular can skip checking a component subtree when there is no relevant notification that the subtree needs to be checked.
+
+Important notifications include:
+
+- A changed input received through a template binding.
+- An event listener running in the component.
+- A Signal read by the template changing.
+- Explicit marking through `ChangeDetectorRef.markForCheck()`.
+- Other supported Angular notifications, such as those generated by `AsyncPipe`.
+
+`OnPush` is not simply a manual switch that turns change detection off forever. It is a more selective change-detection strategy.&#x20;
+
+## 3.3 Product Management example using Signals
+
+Let us implement a small inventory component.
+
+```
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    signal
+} from '@angular/core';
+
+@Component({
+    selector: 'app-inventory',
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: `
+        <h2>Inventory</h2>
+
+        <p>Available stock: {{ stockQuantity() }}</p>
+        <p>Status: {{ stockStatus() }}</p>
+
+        <button
+            [disabled]="stockQuantity() === 0"
+            (click)="sellOneUnit()">
+
+            Sell one unit
+        </button>
+    `
+})
+export class InventoryComponent {
+
+    stockQuantity = signal(10);
+
+    stockStatus = computed(() =>
+        this.stockQuantity() === 0
+            ? 'Out of stock'
+            : this.stockQuantity() <= 5
+                ? 'Low stock'
+                : 'In stock'
+    );
+
+    sellOneUnit(): void {
+        this.stockQuantity.update(quantity =>
+            Math.max(0, quantity - 1)
+        );
+    }
+}
+```
+
+When Sell one unit is clicked:
+
+1. Angular invokes `sellOneUnit()`.
+2. The writable Signal is updated.
+3. `stockStatus`, the computed Signal, derives the new status.
+4. Angular sees that the template depends on the changed Signal.
+5. The component is marked for checking and its rendered state is updated accordingly.
+
+This is a good fit for an `OnPush` component. The same concept also works with the `OnPush` default in current Angular.
+
+## 3.4 Why immutable updates matter
+
+Consider a common mistake when updating a product collection.
+
+Suppose a component maintains a Signal:
+
+```
+products = signal<Product[]>([
+    {
+        id: 101,
+        name: 'Laptop',
+        price: 65000,
+        stockQuantity: 12
+    }
+]);
+```
+
+The following update mutates the object inside the array:
+
+```
+this.products()[0].stockQuantity = 5;
+```
+
+This modifies a nested property but does not call `set()` or `update()` on the Signal. The Signal itself has not been notified of a new value.
+
+A better approach is to create a new array and a new object for the changed product:
+
+```
+updateStock(productId: number, stockQuantity: number): void {
+    this.products.update(products =>
+        products.map(product =>
+            product.id === productId
+                ? { ...product, stockQuantity }
+                : product
+        )
+    );
+}
+```
+
+This version:
+
+- Creates a new array.
+- Creates a new object for the updated product.
+- Leaves unaffected product objects unchanged.
+- Notifies consumers of the Signal that its value has changed.
+
+Immutable updates are especially helpful when state is passed through inputs, used by Signals, or consumed by `OnPush` components.
+
+They are not an absolute requirement for every property mutation, but they make state transitions more predictable and easier to reason about.
+
+## 3.5 What is `ChangeDetectorRef`?
+
+`ChangeDetectorRef` provides APIs for explicitly interacting with Angular's change-detection system.
+
+For example:
+
+```
+import {
+    ChangeDetectorRef,
+    Component,
+    inject
+} from '@angular/core';
+
+@Component({
+    selector: 'app-product-counter',
+    standalone: true,
+    template: `<p>Products: {{ productCount }}</p>`
+})
+export class ProductCounterComponent {
+
+    private cdr = inject(ChangeDetectorRef);
+
+    productCount = 0;
+
+    refreshCount(count: number): void {
+        this.productCount = count;
+        this.cdr.markForCheck();
+    }
+}
+```
+
+`markForCheck()` marks the component so that Angular checks it during a subsequent change-detection pass.
+
+In this simple example, a normal Angular event or reactive state mechanism may already provide the necessary notification. The method is more relevant when integrating external callbacks or other update sources that Angular does not automatically track through the component's normal notification mechanisms.
+
+Other methods, such as `detectChanges()`, `detach()`, and `reattach()`, offer more explicit control. They should be used only when necessary because they can make rendering behaviour more complicated.
+
+## 3.6 Angular Signals and modern change detection
+
+Signals work particularly well with `OnPush` components.
+
+When a Signal is read in a component's template, Angular records that dependency. If the Signal changes, Angular marks the component so it can be updated.
+
+For our Product Management application, this means a product stock update can refresh the relevant UI without requiring a developer to manually call `detectChanges()` after every Signal update.&#x20;
+
+One more version-specific point: zoneless change detection became the default in Angular 21 and later. Modern Angular relies on notifications from Angular APIs such as Signals, template listeners, and `markForCheck()` rather than requiring ZoneJS to identify every asynchronous activity.&#x20;
+
+# 4. Complete demonstration: Product Details Lifecycle
+
+We will now combine lifecycle hooks, view encapsulation, and change detection into a single demo.
+
+The parent will display a product selector. Selecting another product will update the child's input. Clearing the selection will destroy the child component.
+
+## Step 1: Create the model
+
+File: `product.model.ts`
+
+```
+export interface Product {
+    id: number;
+    name: string;
+    price: number;
+    stockQuantity: number;
+}
+```
+
+## Step 2: Create the details component
+
+File: `product-details.ts`
+
+```
+import {
+    ChangeDetectionStrategy,
+    Component,
+    input,
+    OnChanges,
+    OnDestroy,
+    OnInit,
+    SimpleChanges,
+    ViewEncapsulation
+} from '@angular/core';
+
+import { Product } from './product.model';
+
+@Component({
+    selector: 'app-product-details',
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.Emulated,
+    template: `
+        <article class="product-detail">
+            <h2>{{ product().name }}</h2>
+
+            <p>Product ID: {{ product().id }}</p>
+            <p>Price: ₹{{ product().price }}</p>
+            <p>Stock: {{ product().stockQuantity }}</p>
+
+            @if (product().stockQuantity === 0) {
+                <p class="out-of-stock">Out of stock</p>
+            } @else if (product().stockQuantity <= 5) {
+                <p class="low-stock">Low stock</p>
+            } @else {
+                <p class="available">In stock</p>
+            }
+        </article>
+    `,
+    styles: `
+        :host {
+            display: block;
+            margin-top: 20px;
+        }
+
+        .product-detail {
+            padding: 20px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .low-stock {
+            color: #b45309;
+            font-weight: bold;
+        }
+
+        .out-of-stock {
+            color: #b91c1c;
+            font-weight: bold;
+        }
+
+        .available {
+            color: #15803d;
+        }
+    `
+})
+export class ProductDetailsComponent
+    implements OnChanges, OnInit, OnDestroy {
+
+    product = input.required<Product>();
+
+    ngOnChanges(
+        changes: SimpleChanges<ProductDetailsComponent>
+    ): void {
+        const productChange = changes.product;
+
+        if (productChange) {
+            console.log('ngOnChanges:', {
+                previous: productChange.previousValue?.name,
+                current: productChange.currentValue?.name,
+                firstChange: productChange.firstChange
+            });
+        }
+    }
+
+    ngOnInit(): void {
+        console.log(
+            'ngOnInit: Product details initialized for',
+            this.product().name
+        );
+    }
+
+    ngOnDestroy(): void {
+        console.log(
+            'ngOnDestroy: Product details removed from the view'
+        );
+    }
+}
+```
+
+This component demonstrates three important ideas:
+
+- `ngOnChanges()` responds to a changed product input.
+- `ngOnInit()` runs once for each instance.
+- `ngOnDestroy()` runs when the component is removed from the view.
+
+It also uses `ViewEncapsulation.Emulated` and `ChangeDetectionStrategy.OnPush`. The CSS rules define the component's visual presentation, and the Signal-based input supplies the displayed product.
+
+## Step 3: Create the parent product selector
+
+File: `product-page.ts`
+
+```
+import {
+    Component,
+    signal
+} from '@angular/core';
+
+import { Product } from './product.model';
+import { ProductDetailsComponent } from './product-details';
+
+@Component({
+    selector: 'app-product-page',
+    standalone: true,
+    imports: [ProductDetailsComponent],
+    template: `
+        <h1>Product Management</h1>
+
+        <h3>Select a product</h3>
+
+        <div class="product-buttons">
+            @for (product of products; track product.id) {
+                <button
+                    type="button"
+                    (click)="selectProduct(product)">
+
+                    {{ product.name }}
+                </button>
+            }
+        </div>
+
+        <button
+            type="button"
+            (click)="clearSelection()">
+
+            Clear selection
+        </button>
+
+        @if (selectedProduct(); as product) {
+            <app-product-details [product]="product" />
+        } @else {
+            <p>Select a product to view its details.</p>
+        }
+    `,
+    styles: `
+        .product-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 16px 0;
+        }
+
+        button {
+            padding: 10px 14px;
+            cursor: pointer;
+        }
+    `
+})
+export class ProductPageComponent {
+
+    products: Product[] = [
+        {
+            id: 101,
+            name: 'Laptop',
+            price: 65000,
+            stockQuantity: 12
+        },
+        {
+            id: 102,
+            name: 'Keyboard',
+            price: 1500,
+            stockQuantity: 4
+        },
+        {
+            id: 103,
+            name: 'Monitor',
+            price: 12000,
+            stockQuantity: 0
+        }
+    ];
+
+    selectedProduct = signal<Product | null>(null);
+
+    selectProduct(product: Product): void {
+        this.selectedProduct.set(product);
+    }
+
+    clearSelection(): void {
+        this.selectedProduct.set(null);
+    }
+}
+```
+
+## Step 4: Display the page from the root component
+
+Import `ProductPageComponent` into your application's root component.
+
+For example:
+
+```
+import { Component } from '@angular/core';
+import { ProductPageComponent } from './features/products/product-page';
+
+@Component({
+    selector: 'app-root',
+    standalone: true,
+    imports: [ProductPageComponent],
+    template: `<app-product-page />`
+})
+export class AppComponent {}
+```
+
+Adjust the import paths to match the actual file locations in your workspace.
+
+## Step 5: Run the demonstration
+
+```
+ng serve
+```
+
+Open the local application in your browser and select Laptop, Keyboard, and Monitor in sequence.
+
+Then click Clear selection.
+
+### Expected lifecycle behaviour
+
+| User action                             | Expected behaviour                                                                |
+| --------------------------------------- | --------------------------------------------------------------------------------- |
+| The page loads with no product selected | The details component is not created                                              |
+| The user selects Laptop                 | A details instance is created; initial input change and initialization hooks run  |
+| The user selects Keyboard               | The existing details instance receives a new input, so `ngOnChanges()` runs again |
+| The user selects Monitor                | The same details instance updates to the new product                              |
+| The user clicks Clear selection         | The details component is removed, and `ngOnDestroy()` runs                        |
+
+This demonstrates how the component lifecycle relates to ordinary user interactions. It also shows how Signals and `OnPush` can work together to keep a child component's displayed data updated.
+
+# 5. Best practices
+
+| Area                  | Recommended practice                                                                                        |
+| --------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Lifecycle hooks       | Use `ngOnInit()` for initialization and `ngOnDestroy()` or `DestroyRef` for cleanup                         |
+| Input updates         | Use `ngOnChanges()` when behaviour depends on input changes                                                 |
+| DOM access            | Prefer Angular's template and query APIs; use render callbacks when DOM work needs to occur after rendering |
+| Performance           | Avoid expensive operations in hooks that run on every check                                                 |
+| CSS                   | Use the default `Emulated` encapsulation for most application components                                    |
+| Change detection      | Understand `OnPush`, immutable updates, and Signals                                                         |
+| Manual detection      | Reserve `ChangeDetectorRef` operations for cases that genuinely need them                                   |
+| Version compatibility | Confirm the Angular version before relying on defaults, as Angular 22 uses `OnPush` by default              |
+
+
+## 6. Knowledge check
+
+1\. Which hook runs once after Angular has initialized a component's initial inputs?
+
+ngOnDestroy()
+
+ngOnInit()
+
+ngAfterViewChecked()
+
+ngDoCheck()
+
+2\. Which hook is most suitable for responding to changes in a product input?
+
+ngOnChanges()
+
+ngAfterContentInit()
+
+ngOnDestroy()
+
+constructor()
+
+3\. Which view encapsulation mode is Angular's default?
+
+None
+
+ShadowDom
+
+Emulated
+
+ExperimentalIsolatedShadowDom
+
+4\. In Angular 22, which change-detection strategy is enabled by default for new components?
+
+Eager
+
+OnPush
+
+Manual only
+
+None
+
+5\. Why is an immutable Signal update useful?
+
+It disables template checking
+
+It notifies consumers by replacing the stored value and makes state changes easier to track
+
+It bypasses the component lifecycle
+
+It automatically saves data in the backend
+
+Check answers
+
+### Official references
+
+- [Angular component lifecycle](https://angular.dev/guide/components/lifecycle?utm_source=chatgpt.com)
+- [Angular component styling](https://angular.dev/guide/components/styling?utm_source=chatgpt.com)
+- [Change detection and advanced component configuration](https://angular.dev/guide/components/advanced-configuration?utm_source=chatgpt.com)
+- [Angular Signals](https://angular.dev/guide/signals?utm_source=chatgpt.com)
+- [Zoneless Angular](https://angular.dev/guide/zoneless?utm_source=chatgpt.com)
+

@@ -1,0 +1,16 @@
+        <article>
+            <h3>{{ product().name }}</h3>
+
+            <p>Product ID: {{ product().id }}</p>
+            <p>Price: {{ product().price }}</p>
+            <p>Available stock: {{ product().stockQuantity }}</p>
+
+            <button (click)="edit.emit(product().id)">
+                Edit
+            </button>
+
+            <button (click)="remove.emit(product().id)">
+                Delete
+            </button>
+        </article>
+

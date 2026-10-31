@@ -1,0 +1,12 @@
+        <h2>Product List</h2>
+
+        @for (product of products(); track product.id) {
+            <app-child-product-card
+                [product]="product"
+                (edit)="editProduct($event)"
+                (remove)="deleteProduct($event)"
+            />
+        } @empty {
+            <p>No products available.</p>
+        }
+

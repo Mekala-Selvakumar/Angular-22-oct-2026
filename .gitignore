@@ -7,7 +7,7 @@
 
 # Exclude specific files/folders in the root directory
 # (Replace these with your actual folder and file names)
-/Angular-class-notes/
+/Angular-notes-oct-2026
 /RPS Course - Angular training v2.1.pdf
 secret_config.json
 .env

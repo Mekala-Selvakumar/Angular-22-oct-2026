@@ -1,0 +1,22 @@
+<p>inventory-summary works!</p>
+        <section class="inventory-summary">
+            <h2>Inventory Summary</h2>
+
+            <p>
+                Total products:
+                {{ productService.totalProducts() }}
+            </p>
+
+            <p>
+                Low-stock products:
+                {{ productService.lowStockProducts().length }}
+            </p>
+
+            <p>
+                Total inventory value:
+                {{
+                    productService.totalInventoryValue()
+                        | currency:'INR'
+                }}
+            </p>
+        </section>

@@ -1,0 +1,38 @@
+    <h2>Product Management Login</h2>
+
+    <form [formGroup]="loginForm" (ngSubmit)="login()">
+
+      <div>
+        <label>Username</label>
+
+        <input
+          type="text"
+          formControlName="username">
+      </div>
+
+      <div>
+        <label>Password</label>
+
+        <input
+          type="password"
+          formControlName="password">
+      </div>
+
+      <button type="submit"
+              [disabled]="loginForm.invalid">
+        Login
+      </button>
+
+      @if (errorMessage) {
+        <p style="color:red">
+          {{ errorMessage }}
+        </p>
+      }
+
+    </form>
+
+    <hr>
+
+    <p>Demo credentials:</p>
+    <p>Admin: admin / admin123</p>
+    <p>User: user / user123</p>

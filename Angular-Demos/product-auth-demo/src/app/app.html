@@ -1,0 +1,32 @@
+    <h1>Product Management</h1>
+
+    <nav>
+      <a routerLink="/">Home</a> |
+      <a routerLink="/products">Products</a> |
+      <a routerLink="/reports">Reports</a> |
+      <a routerLink="/products/101/edit">Edit Product</a> |
+      <a routerLink="/login">Login</a>
+    </nav>
+
+    @if (accountName) {
+
+      <p>Signed in as: {{ accountName }}</p>
+
+      <button (click)="logout()">Logout</button>
+
+    } @else {
+
+      <button (click)="login()">Login with Microsoft</button>
+
+    }
+
+    <!-- @if (authService.getCurrentUser(); as user) {
+      <p>   Logged in as: <strong>{{ user.username }}</strong>   ({{ user.role }}) </p>
+      <button (click)="logout()">Logout</button>
+    } @else {
+      <p>Not logged in</p>
+    } -->
+
+    <hr>
+
+<router-outlet />

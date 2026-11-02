@@ -1,0 +1,78 @@
+<h2>Login Page</h2>
+
+ <form #loginForm="ngForm" (ngSubmit)="login(loginForm)">
+
+  <!-- Username -->
+  <div>
+    <label>Username:</label>
+
+    <input
+      type="text"
+      name="username"
+      [(ngModel)]="loginModel.username"
+      #username="ngModel"
+      required
+      minlength="3"
+      placeholder="Enter username"
+    />
+
+    @if (username.invalid && username.touched) {
+      @if (username.hasError('required')) {
+        <p>Username is required.</p>
+      }
+
+      @if (username.hasError('minlength')) {
+        <p>Username must contain at least 3 characters.</p>
+      }
+    }
+  </div>
+
+  <br>
+
+  <!-- Password -->
+  <div>
+    <label>Password:</label>
+
+    <input
+      type="password"
+      name="password"
+      [(ngModel)]="loginModel.password"
+      #password="ngModel"
+      required
+      minlength="6"
+      placeholder="Enter password"
+    />
+
+    @if (password.invalid && password.touched) {
+      @if (password.hasError('required')) {
+        <p>Password is required.</p>
+      }
+
+      @if (password.hasError('minlength')) {
+        <p>Password must contain at least 6 characters.</p>
+      }
+    }
+  </div>
+
+  <br>
+
+  <button type="submit" [disabled]="loginForm.invalid">Login</button>
+
+</form>
+
+<hr>
+
+<h3>Form Values (For Learning)</h3>
+
+<p>Model Data:</p>
+<pre>{{ loginModel | json }}</pre>
+
+<p>Form Data:</p>
+<pre>{{ loginForm.value | json }}</pre>
+
+<p>Form Valid: {{ loginForm.valid }}</p>
+<p>Form Invalid: {{ loginForm.invalid }}</p>
+<p>Form Submitted: {{ loginForm.submitted }}</p> 
+
+
+

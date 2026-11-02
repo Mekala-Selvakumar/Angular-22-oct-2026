@@ -1,0 +1,91 @@
+<h2>Product Management</h2>
+
+<p>Total Products: {{ totalProducts() }}</p>
+
+<button type="button" (click)="addNewProduct()">
+  Add New Product
+</button>
+
+<hr>
+
+<!-- Search -->
+<label>Search Product:</label>
+
+<input
+  type="text"
+  placeholder="Search by name or category"
+  [ngModel]="searchText()"
+  (ngModelChange)="searchText.set($event)"
+/>
+
+<hr>
+
+<!-- Product Form -->
+@if (showForm()) {
+
+  <app-product-form
+    [product]="selectedProduct()"
+    (save)="saveProduct($event)"
+    (cancel)="closeForm()"
+  />
+
+  <hr>
+}
+
+<!-- Product List -->
+<h3>Product List</h3>
+
+@if (filteredProducts().length > 0) {
+
+  <table border="1" cellpadding="8">
+
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>SKU</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      @for (product of filteredProducts(); track product.id) {
+
+        <tr>
+          <td>{{ product.id }}</td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.sku }}</td>
+          <td>{{ product.category }}</td>
+          <td>{{ product.price }}</td>
+          <td>{{ product.stockQuantity }}</td>
+
+          <td>
+            <button
+              type="button"
+              (click)="editProduct(product)">
+              Edit
+            </button>
+
+            <button
+              type="button"
+              (click)="deleteProduct(`${product.id}`)">
+              Delete
+            </button>
+          </td>
+        </tr>
+
+      }
+
+    </tbody>
+
+  </table>
+
+} @else {
+
+  <p>No products found.</p>
+
+}

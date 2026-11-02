@@ -1,0 +1,29 @@
+    <h2>Edit Product</h2>
+
+    <form [formGroup]="productForm" (ngSubmit)="save()">
+
+      <p>
+        <label>Product Name</label><br>
+        <input formControlName="name">
+      </p>
+
+      <p>
+        <label>Price</label><br>
+        <input type="number" formControlName="price">
+      </p>
+
+      <button type="submit"
+              [disabled]="productForm.invalid">
+        Save Product
+      </button>
+
+    </form>
+
+    <hr>
+
+    <a routerLink="/products">Back to Product List</a>
+
+    <p>
+      Form status: {{ productForm.dirty ? 'Modified' : 'Unmodified' }}
+    </p>
+

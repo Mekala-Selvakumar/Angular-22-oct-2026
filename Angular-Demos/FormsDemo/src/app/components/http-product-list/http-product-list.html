@@ -1,0 +1,45 @@
+<p>http-product-list works!</p>
+ <!-- <h1> Product List</h1>
+<ul> 
+@for(product of products();track product.id){
+    <li> {{ product.id}}  {{product.name}} - {{product.category}} - {{product.price}} - {{product.stockQuantity}}   </li>
+}
+</ul>  -->
+
+        <h2>Product Management</h2>
+
+        <p>Total products: {{ productService.totalProducts() }}</p>
+
+        <button type="button" (click)="addSampleProduct()">
+            Add Sample Product
+        </button>
+
+        <section class="product-list">
+            @for (
+                product of productService.products();
+                track product.id
+            ) {
+                <article class="product-card">
+                    <h3>{{ product.name }}</h3>
+
+                    <p>SKU: {{ product.sku }}</p>
+                    <p>Category: {{ product.category }}</p>
+
+                    <p>
+                        Price:
+                        {{ product.price | currency:'INR' }}
+                    </p>
+
+                    <p>Stock: {{ product.stockQuantity }}</p>
+
+                    <button
+                        type="button"
+                        (click)="deleteProduct(product.id)">
+
+                        Delete
+                    </button>
+                </article>
+            } @empty {
+                <p>No products available.</p>
+            }
+        </section>

@@ -1,0 +1,12 @@
+ 
+        .product-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .product-card {
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 16px;
+        }

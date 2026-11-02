@@ -1,0 +1,53 @@
+{
+  "products": [
+    {
+      "id": "101",
+      "name": "Laptop",
+      "sku": "LAP-1001",
+      "category": "Electronics",
+      "price": 65000,
+      "stockQuantity": 12
+    },
+    {
+      "id": "102",
+      "name": "Keyboard",
+      "sku": "KEY-1002",
+      "category": "Accessories",
+      "price": 1500,
+      "stockQuantity": 4
+    },
+    {
+      "id": "103",
+      "name": "Monitor",
+      "sku": "MON-1003",
+      "category": "Electronics",
+      "price": 12000,
+      "stockQuantity": 0
+    },
+    {
+      "name": "HeadSet",
+      "sku": "HST-1234",
+      "category": "Electronics",
+      "price": 1999.77,
+      "stockQuantity": 3,
+      "id": "NHQDbW-wEKY"
+    },
+    {
+      "name": "Mouse",
+      "sku": "MOU-1234",
+      "category": "Electronics",
+      "price": 2499.86,
+      "stockQuantity": 8,
+      "id": "lwi5-ngMiLA"
+    },
+    {
+      "name": "PenSet",
+      "sku": "PEN-1234",
+      "category": "Accessories",
+      "price": 500,
+      "stockQuantity": 15,
+      "id": "TWT2Hke8Lwo"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

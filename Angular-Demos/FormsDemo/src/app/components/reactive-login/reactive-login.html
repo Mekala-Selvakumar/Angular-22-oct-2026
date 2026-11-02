@@ -1,0 +1,59 @@
+<h2>Login Page</h2>
+
+ <form  [formGroup]="loginForm" (ngSubmit)="login()">
+
+  <!-- Username -->
+  <div>
+    <label>Username:</label>
+
+    <input
+      type="text"
+      name="username"
+      formControlName="username"
+      placeholder="Enter username"
+    />
+
+    @if (loginForm.controls.username.touched &&  loginForm.controls.username.invalid) {
+      @if (loginForm.controls.username.hasError('required')) {
+        <p>Username is required.</p>
+      }
+
+      @if (loginForm.controls.username.hasError('minlength')) {
+        <p>Username must contain at least 3 characters.</p>
+      }
+    }
+  </div>
+
+  <br>
+
+  <!-- Password -->
+  <div>
+    <label>Password:</label>
+
+    <input
+      type="password"
+      name="password"
+      formControlName="password"
+  
+    />
+
+    @if (loginForm.controls.password.invalid && loginForm.controls.password.touched) {
+      @if (loginForm.controls.password.hasError('required')) {
+        <p>Password is required.</p>
+      }
+
+      @if (loginForm.controls.password.hasError('minlength')) {
+        <p>Password must contain at least 6 characters.</p>
+      }
+     }
+  </div>
+
+  <br>
+
+  <button type="submit" [disabled]="loginForm.invalid">Login</button>
+
+</form>
+
+<hr>
+
+

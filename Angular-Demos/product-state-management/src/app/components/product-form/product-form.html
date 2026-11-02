@@ -1,0 +1,87 @@
+<h3>{{ product ? 'Edit Product' : 'Add Product' }}</h3>
+
+<form #productForm="ngForm"
+      (ngSubmit)="submitForm(productForm)">
+
+  <div>
+    <label>Product Name:</label>
+    <input
+      type="text"
+      name="name"
+      [(ngModel)]="model.name"
+      required
+      minlength="3"
+      #name="ngModel"
+    />
+
+    @if (name.invalid && name.touched) {
+      <p>Enter a product name with at least 3 characters.</p>
+    }
+  </div>
+
+  <br>
+
+  <div>
+    <label>SKU:</label>
+    <input
+      type="text"
+      name="sku"
+      [(ngModel)]="model.sku"
+      required
+    />
+  </div>
+
+  <br>
+
+  <div>
+    <label>Category:</label>
+    <select
+      name="category"
+      [(ngModel)]="model.category"
+      required
+    >
+      <option value="">Select Category</option>
+      <option value="Electronics">Electronics</option>
+      <option value="Accessories">Accessories</option>
+      <option value="Furniture">Furniture</option>
+    </select>
+  </div>
+
+  <br>
+
+  <div>
+    <label>Price:</label>
+    <input
+      type="number"
+      name="price"
+      [(ngModel)]="model.price"
+      required
+      min="0.01"
+    />
+  </div>
+
+  <br>
+
+  <div>
+    <label>Stock Quantity:</label>
+    <input
+      type="number"
+      name="stockQuantity"
+      [(ngModel)]="model.stockQuantity"
+      required
+      min="0"
+    />
+  </div>
+
+  <br>
+
+  <button type="submit" [disabled]="productForm.invalid">
+    {{ product ? 'Update Product' : 'Save Product' }}
+  </button>
+
+  <button type="button" (click)="cancel.emit()">
+    Cancel
+  </button>
+
+</form>
+

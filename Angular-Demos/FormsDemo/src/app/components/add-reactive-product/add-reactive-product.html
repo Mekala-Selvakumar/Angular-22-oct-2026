@@ -1,0 +1,210 @@
+<p>add-reactive-product works!</p>
+<div class="container py-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white py-3">
+            <h3 class="mb-0">
+                <i class="bi bi-box-seam me-2"></i>
+                Add New Product
+            </h3>
+        </div>
+
+        <div class="card-body p-4">
+            @if (successMessage) {
+                <div class="alert alert-success" role="status">
+                    {{ successMessage }}
+                </div>
+            }
+
+            @if (errorMessage) {
+                <div class="alert alert-danger" role="alert">
+                    {{ errorMessage }}
+                </div>
+            }
+
+            <div class="alert alert-light border mb-4">
+                <strong>Form Value:</strong>
+                <pre class="mb-0">{{ productForm.value | json }}</pre>
+            </div>
+
+            <form [formGroup]="productForm" (ngSubmit)="saveProduct()" novalidate>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="name" class="form-label">
+                            Product Name <span class="text-danger">*</span>
+                        </label>
+                        <input
+                            id="name"
+                            type="text"
+                            formControlName="name"
+                            class="form-control"
+                            placeholder="Enter product name"
+                            [class.is-invalid]="productForm.controls.name.invalid && (productForm.controls.name.touched || submitted)"
+                            [class.is-valid]="productForm.controls.name.valid && productForm.controls.name.touched"
+                        />
+                        @if (productForm.controls.name.invalid && (productForm.controls.name.touched || submitted)) {
+                            <div class="invalid-feedback">
+                                @if (productForm.controls.name.hasError('required')) {
+                                    <div>Product name is required.</div>
+                                }
+                                @if (productForm.controls.name.hasError('minlength')) {
+                                    <div>Name must contain at least 3 characters.</div>
+                                }
+                                @if (productForm.controls.name.hasError('maxlength')) {
+                                    <div>Name cannot exceed 80 characters.</div>
+                                }
+                            </div>
+                        }
+                        <div class="form-text">Enter a product name (3–80 characters).</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="sku" class="form-label">
+                            SKU <span class="text-danger">*</span>
+                        </label>
+                        <input
+                            id="sku"
+                            type="text"
+                            formControlName="sku"
+                            class="form-control"
+                            placeholder="Example: LAP-1001"
+                            [class.is-invalid]="productForm.controls.sku.invalid && (productForm.controls.sku.touched || submitted)"
+                            [class.is-valid]="productForm.controls.sku.valid && productForm.controls.sku.touched"
+                        />
+                        @if (productForm.controls.sku.invalid && (productForm.controls.sku.touched || submitted)) {
+                            <div class="invalid-feedback">
+                                @if (productForm.controls.sku.hasError('required')) {
+                                    <div>SKU is required.</div>
+                                }
+                                @if (productForm.controls.sku.hasError('pattern')) {
+                                    <div>Enter an SKU such as LAP-1001.</div>
+                                }
+                            </div>
+                        }
+                        <div class="form-text">Format: Three letters followed by four digits.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="category" class="form-label">
+                            Category <span class="text-danger">*</span>
+                        </label>
+                        <select
+                            id="category"
+                            formControlName="category"
+                            class="form-select"
+                            [class.is-invalid]="productForm.controls.category.invalid && (productForm.controls.category.touched || submitted)"
+                            [class.is-valid]="productForm.controls.category.valid && productForm.controls.category.touched"
+                        >
+                            <option value="">Select a category</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Accessories">Accessories</option>
+                            <option value="Office">Office</option>
+                        </select>
+                        @if (productForm.controls.category.invalid && (productForm.controls.category.touched || submitted)) {
+                            <div class="invalid-feedback">Please select a category.</div>
+                        }
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="price" class="form-label">
+                            Price (₹) <span class="text-danger">*</span>
+                        </label>
+                        <input
+                            id="price"
+                            type="number"
+                            formControlName="price"
+                            class="form-control"
+                            min="0.01"
+                            step="0.01"
+                            placeholder="Enter price"
+                            [class.is-invalid]="productForm.controls.price.invalid && (productForm.controls.price.touched || submitted)"
+                            [class.is-valid]="productForm.controls.price.valid && productForm.controls.price.touched"
+                        />
+                        @if (productForm.controls.price.invalid && (productForm.controls.price.touched || submitted)) {
+                            <div class="invalid-feedback">
+                                @if (productForm.controls.price.hasError('required')) {
+                                    <div>Price is required.</div>
+                                }
+                                @if (productForm.controls.price.hasError('min')) {
+                                    <div>Price must be greater than zero.</div>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="stockQuantity" class="form-label">
+                            Stock Quantity <span class="text-danger">*</span>
+                        </label>
+                        <input
+                            id="stockQuantity"
+                            type="number"
+                            formControlName="stockQuantity"
+                            class="form-control"
+                            min="0"
+                            step="1"
+                            placeholder="Enter stock quantity"
+                            [class.is-invalid]="productForm.controls.stockQuantity.invalid && (productForm.controls.stockQuantity.touched || submitted)"
+                            [class.is-valid]="productForm.controls.stockQuantity.valid && productForm.controls.stockQuantity.touched"
+                        />
+                        @if (productForm.controls.stockQuantity.invalid && (productForm.controls.stockQuantity.touched || submitted)) {
+                            <div class="invalid-feedback">
+                                @if (productForm.controls.stockQuantity.hasError('required')) {
+                                    <div>Stock quantity is required.</div>
+                                }
+                                @if (productForm.controls.stockQuantity.hasError('min')) {
+                                    <div>Stock cannot be negative.</div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <hr class="my-4">
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-outline-secondary" (click)="resetForm()">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i>
+                        Reset
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-1"></i>
+                        Save Product
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (savedProducts.length > 0) {
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Products Added in This Session</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Product Name</th>
+                                <th>SKU</th>
+                                <th>Price</th>
+                                <th>Category</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (product of savedProducts; track product.id) {
+                                <tr>
+                                    <td class="fw-semibold">{{ product.name }}</td>
+                                    <td>{{ product.sku }}</td>
+                                    <td>{{ product.price | currency:'INR' }}</td>
+                                    <td>
+                                        <span class="badge bg-info text-dark">{{ product.category }}</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>

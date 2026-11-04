@@ -1,0 +1,15 @@
+    
+    <h3>7. Typeahead search</h3>
+    
+    <input placeholder="Type a name, e.g. 'le'..." (input)="onInput($event)" />
+    @if (searching()) { <span>🔎 searching...</span> }
+
+    <ul>
+      @for (u of results(); track u.id) {
+        <li>{{ u.name }} ({{ u.email }})</li>
+      } @empty {
+        <li>No results</li>
+      }
+    </ul>
+
+    <p>Open the Network tab: type quickly and watch how few requests are sent.</p>

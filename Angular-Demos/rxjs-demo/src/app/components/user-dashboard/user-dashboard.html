@@ -1,0 +1,28 @@
+    <h3>8. Lab: User Dashboard</h3>
+
+    <label>
+      User:
+      <select (change)="onSelect($event)">
+        <option value="1">User 1</option>
+        <option value="2">User 2</option>
+        <option value="3">User 3</option>
+        <option value="9999">User 9999 (does not exist)</option>
+      </select>
+    </label>
+
+    @let s = state();
+
+    @if (s.status === 'loading') {
+      <p>⏳ Loading dashboard...</p>
+    } @else if (s.status === 'error') {
+      <p style="color:red">❌ {{ s.message }}</p>
+      <button (click)="reload()">Retry</button>
+    } @else if (s.status === 'success') {
+      <h4>{{ s.data.user.name }} ({{ s.data.user.email }})</h4>
+      <p>Posts: {{ s.data.posts.length }} | Todos: {{ s.data.todos.length }}</p>
+      <ul>
+        @for (p of s.data.posts.slice(0, 3); track p.id) {
+          <li>{{ p.title }}</li>
+        }
+      </ul>
+    }

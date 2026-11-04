@@ -1,0 +1,21 @@
+    <h3>5. combineLatest and forkJoin</h3>
+
+    <h4>combineLatest: live filter (users + search text)</h4>
+    <input placeholder="Filter by name..." (input)="onTerm($event)" />
+    <ul>
+      @for (u of filteredUsers$ | async; track u.id) {
+        <li>{{ u.name }}</li>
+      }
+    </ul>
+
+    <h4>forkJoin: 3 requests, one result</h4>
+    <button (click)="loadDashboard(1)">User 1</button>
+    <button (click)="loadDashboard(2)">User 2</button>
+    <button (click)="loadDashboard(3)">User 3</button>
+
+    @if (dashboard(); as d) {
+      <p>
+        <b>{{ d.user.name }}</b> has {{ d.posts.length }} posts and
+        {{ d.todos.length }} todos.
+      </p>
+    }

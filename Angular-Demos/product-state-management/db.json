@@ -28,25 +28,9 @@
       "name": "HeadSet",
       "sku": "HST-1234",
       "category": "Electronics",
-      "price": 1999.77,
+      "price": 2000,
       "stockQuantity": 3,
       "id": "NHQDbW-wEKY"
-    },
-    {
-      "name": "Mouse",
-      "sku": "MOU-1234",
-      "category": "Electronics",
-      "price": 2499.86,
-      "stockQuantity": 8,
-      "id": "lwi5-ngMiLA"
-    },
-    {
-      "name": "PenSet",
-      "sku": "PEN-1234",
-      "category": "Accessories",
-      "price": 500,
-      "stockQuantity": 15,
-      "id": "TWT2Hke8Lwo"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

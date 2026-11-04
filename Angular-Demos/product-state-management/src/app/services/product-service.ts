@@ -2,11 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { computed, inject, Service, signal } from '@angular/core';
 import { Product, ProductDraft } from '../model/product';
 import { Observable, tap } from 'rxjs';
-import { StringToken } from '@angular/compiler';
-
+ 
 @Service()
 export class ProductService {
-        private http=inject(HttpClient)
+    private http=inject(HttpClient)
     private apiUrl="http://localhost:3000/products";
 
     private readonly productState = signal<Product[]>([]);
@@ -76,3 +75,25 @@ export class ProductService {
 
 
 }
+// @Service()
+// export class ProductService {
+//   private http = inject(HttpClient);
+//   private apiUrl = 'http://localhost:3000/products';
+
+//   private readonly productState = new BehaviorSubject<Product[]>([]);
+//   readonly products$ = this.productState.asObservable();
+
+//   readonly totalProducts$ = this.products$.pipe(map(list => list.length));
+
+//   getAllProducts(): Observable<Product[]> {
+//     return this.http.get<Product[]>(this.apiUrl).pipe(
+//       tap(list => this.productState.next(list))
+//     );
+//   }
+
+//   addProduct(p: ProductDraft): Observable<Product> {
+//     return this.http.post<Product>(this.apiUrl, p).pipe(
+//       tap(created => this.productState.next([...this.productState.value, created]))
+//     );
+//   }
+// }

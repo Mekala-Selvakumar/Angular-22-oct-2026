@@ -1,0 +1,16 @@
+<h3>3. async-demo</h3>
+<h4> With async pipe</h4>
+
+@if (users$ | async; as users) {
+    <h1> Total Users: {{users.length}} </h1>
+    <ul>
+        @for (user of users; track user.id) {
+            <li>{{user.name}}</li>
+        }
+    </ul>
+} @else {
+    <p>Loading...</p>
+}
+<h4> With Signals</h4>
+<p> Total Users: {{users1().length}} </p>
+ 

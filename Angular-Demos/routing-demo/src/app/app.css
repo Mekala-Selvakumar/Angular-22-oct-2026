@@ -1,0 +1,9 @@
+nav{
+    display:flex;
+    gap:1rem;
+}
+a.active{
+    color:blue;
+    font-weight:bold;
+    text-decoration:underline;
+}

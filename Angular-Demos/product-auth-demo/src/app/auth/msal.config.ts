@@ -66,14 +66,15 @@ export function MSALInterceptorConfigFactory():
 
   // Exact API endpoint
   protectedResourceMap.set(
-    'http://localhost:8080/api/products',
-    ['api://13aac3b9-f30a-4689-8f5a-a34fb7c49a3d/Products.Read']
+    'http://localhost:8082/api/products',
+    ['api://14e2c5aa-bf67-42b0-b5e4-2ac53360e4c2/Products.Read']
   );
 
   // Product detail endpoints
   protectedResourceMap.set(
-    'http://localhost:8080/api/products/*',
-    ['api://13aac3b9-f30a-4689-8f5a-a34fb7c49a3d/Products.Read']
+    'http://localhost:8082/api/products/*',
+    ['api://14e2c5aa-bf67-42b0-b5e4-2ac53360e4c2/Products.Read']
+    // ['api://13aac3b9-f30a-4689-8f5a-a34fb7c49a3d/Products.Read']
   );
 
   return {

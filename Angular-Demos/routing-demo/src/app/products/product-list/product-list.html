@@ -1,0 +1,12 @@
+<p>product-list works!</p>
+<button (click)="setSort('asc')">Sort Ascending (A-Z)</button>
+<button (click)="setSort('desc')">Sort Descending (Z-A)</button>
+<ul>
+    @for(p of sorted();track p.id){
+        <li>
+            <a [routerLink]="['/products', p.id]" routerLinkActive="active">
+                {{p.name}}
+            </a>
+        </li>
+    }
+</ul>

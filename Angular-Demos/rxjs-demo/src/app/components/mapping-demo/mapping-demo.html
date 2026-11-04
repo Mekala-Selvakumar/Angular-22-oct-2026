@@ -1,0 +1,9 @@
+<h3>4. Higher-order mapping operators</h3>
+<p>Each request takes 2 seconds. Click the button <b>3 times quickly</b>.</p>
+<button (click)="click()">Click (next is #{{ counter() + 1 }})</button>
+ 
+    @for (op of ops; track op) {
+<h4>{{ op }}</h4>
+<pre>{{ logs[op].lines().join('\n') }}</pre>
+    }
+    

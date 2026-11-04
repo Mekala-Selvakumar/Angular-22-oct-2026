@@ -54,8 +54,7 @@
     <tbody>
 
       @for (product of filteredProducts(); track product.id) {
-
-        <tr>
+       <tr>
           <td>{{ product.id }}</td>
           <td>{{ product.name }}</td>
           <td>{{ product.sku }}</td>
@@ -64,17 +63,8 @@
           <td>{{ product.stockQuantity }}</td>
 
           <td>
-            <button
-              type="button"
-              (click)="editProduct(product)">
-              Edit
-            </button>
-
-            <button
-              type="button"
-              (click)="deleteProduct(`${product.id}`)">
-              Delete
-            </button>
+            <button  type="button"  (click)="editProduct(product)">  Edit </button>
+            <button type="button" (click)="deleteProduct(`${product.id}`)">  Delete </button>
           </td>
         </tr>
 

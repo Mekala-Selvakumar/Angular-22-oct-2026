@@ -1,0 +1,5 @@
+    <h3>6. Error handling and retry</h3>
+    <button (click)="runFlaky()" [disabled]="loading()">Flaky API (succeeds on 3rd try)</button>
+    <button (click)="runBroken()" [disabled]="loading()">Broken API (always fails)</button>
+    @if (loading()) { <p>⏳ Working...</p> }
+    <pre>{{ log.lines().join('\n') }}</pre>

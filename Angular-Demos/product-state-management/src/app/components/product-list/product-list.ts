@@ -11,7 +11,7 @@ import { ProductForm } from '../product-form/product-form';
   templateUrl: './product-list.html',
 })
 export class ProductList {
-    private productService = inject(ProductService);
+   private productService = inject(ProductService);
 
   // Read product state from the service
   products = this.productService.products;

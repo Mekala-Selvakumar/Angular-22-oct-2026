@@ -3,6 +3,7 @@ import { authGuardGuard } from './guards/auth-guard-guard';
 import { adminMatchGuard } from './guards/admin-match-guard';
 import { unsavedChangesGuard } from './guards/unsaved-changes-guard';
 import { MsalGuard } from '@azure/msal-angular';
+import { entraAdminGuard } from './guards/entra-admin-guard';
 
 export const routes: Routes = [
       {
@@ -20,7 +21,7 @@ export const routes: Routes = [
         .then(m => m.ProductListPage),
 
     // canActivate: [authGuardGuard]
-        canActivate: [MsalGuard],
+      canActivate: [MsalGuard],
 
   },
 
@@ -41,7 +42,8 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/admin-reports-page/admin-reports-page')
         .then(m => m.AdminReportsPage),
-    canMatch: [adminMatchGuard]
+    // canMatch: [adminMatchGuard]
+    canMatch:[entraAdminGuard]
   },
 
   // Fallback route for normal users
@@ -51,7 +53,8 @@ export const routes: Routes = [
       import('./pages/access-denied-page/access-denied-page')
         .then(m => m.AccessDeniedPage),
 
-    canActivate: [authGuardGuard]
+    // canActivate: [authGuardGuard]
+    canActivate: [MsalGuard]
   },
 
   {

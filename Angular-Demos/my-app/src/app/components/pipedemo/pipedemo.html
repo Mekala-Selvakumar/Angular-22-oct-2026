@@ -1,0 +1,85 @@
+<p>pipedemo works!</p>
+
+<h3>{{message}}</h3>
+<h3>{{message | uppercase}}</h3>
+<h3>{{message | lowercase}}</h3>
+<h3>{{message | titlecase}}</h3>
+<h3>{{message|slice:0:15|uppercase}}</h3>
+<hr>
+<h1> Date  pipe</h1>
+<h1>{{today}}</h1>
+<hr>
+
+<h3> date pipe :{{today | date}}</h3>
+<h3>Dob :{{dob}}</h3>
+<h3>Dob: Date Pipe :{{dob| date}}</h3>
+<hr>
+
+<h3>short Date : {{today | date:'shortDate'}}</h3>
+<h3>Medium Date: {{today | date:'mediumDate'}}</h3>
+<h3>Long Date: {{today | date:'longDate'}}</h3>
+<h3>Full Date:{{today | date:'fullDate'}}</h3>
+<h3> Custom Format Date : {{today|date:'dd/MM/yyyy'}}</h3>
+<h3> Custom Format Date : {{today|date:'dd/MM/yyyy EEE'}}</h3>
+<h3> Custom Format Date : {{today|date:'dd/MM/yyyy EEEE'}}</h3>
+<h3> Custom Format Date : {{today|date:'dd/MM/yyyy EEEE  hh:mm:ss a '}}</h3>
+<hr>
+
+<h3>{{today | date:'short'}}</h3>
+<h3>{{today | date:'medium'}}</h3>
+<h3>{{today | date:'long'}}</h3>
+<h3>{{today | date:'full'}}</h3>
+<hr>
+
+<h3>Short Time :  {{today|date:'shortTime'}}</h3>
+<h3>Medium Time :  {{today|date:'mediumTime'}}</h3>
+<h3>Long Time :  {{today|date:'longTime'}}</h3>
+<h3>{{today | date:'dd-MMMM-yyyy EEEE hh:mm:ss a' |uppercase}}</h3>
+<h1> Currency Pipe</h1>
+<h2>{{amount|currency}}</h2>
+<h2>{{amount|currency:'INR'}}</h2>
+<h2>{{amount|currency:'INR':true}}</h2>
+
+<h2>{{amount|currency:'INR':false}}</h2>
+
+<h3>{{678500|currency:'USD'}}</h3>
+<!-- Displaing currrency code Instead of Symbol -->
+<h3>{{678500|currency:'USD':'code'}}</h3>
+
+<h3>{{678500|currency:'EUR'}}</h3>
+<h3>{{678500|currency:'USD':'symbol':'5.2-3'}}</h3>
+<h3>{{678|currency:'USD':'symbol':'5.2-3'}}</h3>
+<h3>{{678.7856432|currency:'USD':'symbol':'5.2-3'}}</h3>
+<h3>{{678.7|currency:'USD':'symbol':'5.2-3'}}</h3>
+<hr>
+<h1> Number Pipe</h1>
+<p>
+    No specified formatting:
+    {{pi | number}}
+    <!--output: '3.142'-->
+  </p>
+
+  <p>
+    With digitsInfo parameter specified:
+    {{pi | number:'4.1-5'}}
+    <!--output: '0,003.14159'-->
+  </p>
+
+ <h3> {{3.6 | number: '1.0-0'}} </h3>
+<!--will output '4'-->
+
+<h3> {{-3.6 | number: '1.0-0'}} </h3>
+<!--will output '-4'-->
+
+<h2> Discount :{{discount|percent}}</h2>
+<h2> Discount :{{discount|percent:'1.1-2'}}</h2>
+
+<h2> Employee: {{employee|json}}</h2>
+<pre>{{employee|json}}</pre>
+
+<h2> Product Status : {{product.stockQuantity }}</h2>
+<h2> Product Status : {{product.stockQuantity|stockStatus}}</h2>
+<!--  3 is passed as a reorder level -->
+<h2> Product Status : {{product.stockQuantity|stockStatus:3}}</h2>
+
+<h2> Sqrt Pipe : {{225 |sqrt}}</h2>

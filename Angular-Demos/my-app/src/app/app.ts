@@ -6,9 +6,10 @@ import { HighlightDirective } from './highlight.directive';
 import { ProductCard } from './components/product-card/product-card';
 import { Counter } from './components/counter/counter';
 import { Demo } from './components/demo/demo';
+import { Pipedemo } from './components/pipedemo/pipedemo';
  
 @Component({
-  imports: [RouterOutlet, NgClass, NgStyle, FormsModule, HighlightDirective, ProductCard, Counter, Demo],
+  imports: [RouterOutlet, NgClass, NgStyle, FormsModule, HighlightDirective, ProductCard, Counter, Demo, Pipedemo],
   selector: 'app-root',
 //   template:`
 //   <input  type="text" value="Hi I am Angular" id="input1"   />

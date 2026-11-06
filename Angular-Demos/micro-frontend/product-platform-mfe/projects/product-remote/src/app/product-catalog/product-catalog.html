@@ -1,0 +1,25 @@
+<p>product-catalog works!</p>
+    <h2>Product Management</h2>
+
+    <p>This component belongs to Product Remote.</p>
+
+    <h3>Available Products</h3>
+
+    @for (product of products; track product.id) {
+
+      <div style="border:1px solid gray;
+                  padding:15px;
+                  margin:10px">
+
+        <h3>{{ product.name }}</h3>
+
+        <p>Price: ₹{{ product.price }}</p>
+
+        <button (click)="selectProduct(product)">
+          Select Product
+        </button>
+
+      </div>
+
+    }
+

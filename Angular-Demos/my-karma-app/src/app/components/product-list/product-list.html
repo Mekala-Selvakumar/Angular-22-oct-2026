@@ -1,0 +1,26 @@
+    <div class="container" style="padding: 20px; font-family: sans-serif;">
+      <h1 data-testid="page-title">Product Catalog</h1>
+
+      <!-- Add Product Form -->
+      <fieldset style="margin-bottom: 20px; padding: 15px;">
+        <legend>Add New Product</legend>
+        <input type="text" [(ngModel)]="newName" placeholder="Product Name" data-testid="input-name" style="margin-right: 10px;" />
+        <input type="number" [(ngModel)]="newPrice" placeholder="Price" data-testid="input-price" style="margin-right: 10px;" />
+        <button (click)="onAddProduct()" data-testid="btn-add">Add Product</button>
+      </fieldset>
+
+      <!-- Product List Display -->
+      <ul>
+        @for (product of products(); track product.id) {
+          <li class="product-item" style="margin-bottom: 10px;">
+            <span>{{ product.name }} - ₹{{ product.price }}</span>
+            <button 
+              (click)="onDeleteProduct(product.id!)" 
+              [attr.data-testid]="'btn-delete-' + product.id"
+              style="margin-left: 20px; color: red;">
+              Delete
+            </button>
+          </li>
+        }
+      </ul>
+    </div>

@@ -1,0 +1,23 @@
+    <h1>Product Enterprise Platform</h1>
+    <nav>
+      <a routerLink="/">Home</a>  |
+      <a routerLink="/products">Products</a>
+    </nav>
+    <hr>
+   <router-outlet />
+    <hr>
+    <h3>Selected Product – Shell Application</h3>
+    @if (selectedProduct(); as product) {
+
+      <p>ID: {{ product.id }}</p>
+
+      <p>Name: {{ product.name }}</p>
+
+      <p>Price: ₹{{ product.price }}</p>
+
+    } @else {
+
+      <p>No product selected.</p>
+
+    }
+
